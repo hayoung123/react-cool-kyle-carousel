@@ -107,8 +107,8 @@ function CarouselTest() {
         <div>2</div>
         <div>3</div>
       </Carousel>
-      <div onClick={carouselRef.current.handleClickPrev}><</div>
-      <div onClick={carouselRef.current.handleClickNext}>></div>
+      <div onClick={()=>{carouselRef.current.handleClickPrev()}}><</div>
+      <div onClick={()=>{carouselRef.current.handleClickNext()}}>></div>
     </div>
   );
 }
