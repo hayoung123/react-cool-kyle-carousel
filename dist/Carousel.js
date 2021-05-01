@@ -5,30 +5,38 @@ import CarouselItem from './item/CarouselItem';
 import CarouselPage from './page/CarouselPage';
 const Carousel = /*#__PURE__*/forwardRef(({
   children,
-  slideToScroll,
-  speed,
-  defaultArrow,
-  defaultPaging,
-  PagingComp
+  slideToScroll = 1,
+  animationType = 'ease',
+  speed = 500,
+  defaultArrow = false,
+  defaultPaging = false,
+  setCurrentIndex
 }, ref) => {
   const [locationX, setLocationX] = useState(0);
   const [currIdx, setCurrIdx] = useState(0);
   const [leftItem, setLeftItem] = useState();
-  const [itemWidth, setItemWidth] = useState(); //308
-
+  const [itemWidth, setItemWidth] = useState();
+  const [animation, setAnimation] = useState();
   const carouselContainerRef = useRef();
 
   const isCarouselWidth = () => carouselContainerRef.current && itemWidth;
 
-  const containerWidth = isCarouselWidth() && carouselContainerRef.current.offsetWidth; //1280
+  const containerWidth = isCarouselWidth() && carouselContainerRef.current.offsetWidth;
+  const slideToShow = isCarouselWidth() && Math.floor(containerWidth / itemWidth);
+  const marginRigthForItem = isCarouselWidth() && (containerWidth - slideToShow * itemWidth) / (slideToShow - 1); //초기 설정
 
-  const slideToShow = isCarouselWidth() && Math.floor(containerWidth / itemWidth); //4
+  useEffect(() => {
+    setAnimation(`${speed / 1000}s ${animationType}`);
+  }, [infinity, slideToScroll, speed, animationType]);
 
-  const marginRigthForItem = isCarouselWidth() && (containerWidth - slideToShow * itemWidth) / (slideToShow - 1);
+  const setAnimationType = (animationSpeed, type) => {
+    setAnimation(`${animationSpeed / 1000}s ${type}`);
+  };
 
   const handleClickPrev = () => {
-    const possibleMove = currIdx >= slideToScroll ? slideToScroll : currIdx;
+    let possibleMove = currIdx >= slideToScroll ? slideToScroll : currIdx;
     setLocationX(locationX + (itemWidth + marginRigthForItem) * possibleMove);
+    setCurrentIndex && setCurrentIndex(currIdx - possibleMove);
     setCurrIdx(currIdx - possibleMove);
     setLeftItem(leftItem + possibleMove);
   };
@@ -36,8 +44,9 @@ const Carousel = /*#__PURE__*/forwardRef(({
   const handleClickNext = () => {
     const totalItemCount = children.length;
     const newLeftItem = totalItemCount - (currIdx + slideToShow);
-    const possibleMove = newLeftItem >= slideToScroll ? slideToScroll : newLeftItem;
+    let possibleMove = newLeftItem >= slideToScroll ? slideToScroll : newLeftItem;
     setLocationX(locationX - (itemWidth + marginRigthForItem) * possibleMove);
+    setCurrentIndex && setCurrentIndex(currIdx + possibleMove);
     setCurrIdx(currIdx + possibleMove);
     setLeftItem(newLeftItem - possibleMove);
   };
@@ -64,7 +73,7 @@ const Carousel = /*#__PURE__*/forwardRef(({
   });
   return /*#__PURE__*/React.createElement(StyledCarousel, {
     locationX: locationX,
-    speed: speed / 1000,
+    animation: animation,
     currIdx: currIdx,
     leftItem: leftItem
   }, /*#__PURE__*/React.createElement("div", {
@@ -95,8 +104,8 @@ export const StyledCarousel = styled.div`
   .carouselList {
     display: flex;
     transition: ${({
-  speed
-}) => `transform ${speed}s`};
+  animation
+}) => `transform ${animation}`};
     transform: ${({
   locationX
 }) => `translateX(${locationX}px)`};
@@ -116,7 +125,7 @@ export const StyledCarousel = styled.div`
   .leftArrow:hover {
     color: ${({
   currIdx
-}) => currIdx !== 0 && 'red'};
+}) => currIdx === 0 ? '' : 'red'};
   }
   .rightArrow {
     right: -50px;
@@ -127,6 +136,6 @@ export const StyledCarousel = styled.div`
   .rightArrow :hover {
     color: ${({
   leftItem
-}) => leftItem !== 0 && 'red'};
+}) => leftItem === 0 ? '' : 'red'};
   }
 `;

@@ -18,7 +18,7 @@ const CarouselPage = ({
 
 const StyledPageContainer = styled.div`
   position: absolute;
-  top: -7%;
+  top: -1.2rem;
   right: 1%;
   display: flex;
   .pageDivider {
