@@ -1,12 +1,13 @@
 {
   "name": "react-cool-kyle-carousel",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "private": false,
   "description": "react-cool-carousel",
   "repository": {
     "type": "git",
     "url": "https://github.com/hayoung123/react-cool-kyle-carousel"
   },
+  "main": "./dist/Carousel.js",
   "babel": {
     "presets": [
       "@babel/preset-react"
@@ -24,8 +25,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "publish:npm": "rm -rf dist && mkdir dist && babel src/lib -d dist --copy-files",
-    "main": "./dist/Carousel.js"
+    "publish:npm": "rm -rf dist && mkdir dist && babel src/lib -d dist --copy-files"
   },
   "eslintConfig": {
     "extends": [

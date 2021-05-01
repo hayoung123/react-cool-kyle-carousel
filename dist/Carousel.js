@@ -1,8 +1,6 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { IoChevronBackSharp, IoChevronForwardSharp } from 'react-icons/io5';
-import CarouselItem from './item/CarouselItem';
-import CarouselPage from './page/CarouselPage';
 const Carousel = /*#__PURE__*/forwardRef(({
   children,
   slideToScroll = 1,
@@ -27,7 +25,7 @@ const Carousel = /*#__PURE__*/forwardRef(({
 
   useEffect(() => {
     setAnimation(`${speed / 1000}s ${animationType}`);
-  }, [infinity, slideToScroll, speed, animationType]);
+  }, [slideToScroll, speed, animationType]);
 
   const setAnimationType = (animationSpeed, type) => {
     setAnimation(`${animationSpeed / 1000}s ${type}`);
@@ -90,9 +88,6 @@ const Carousel = /*#__PURE__*/forwardRef(({
   })), defaultPaging && /*#__PURE__*/React.createElement(CarouselPage, {
     current: currIdx + slideToShow,
     total: children && children.length
-  }), PagingComp && /*#__PURE__*/React.createElement(PagingComp, {
-    current: currIdx + slideToShow,
-    total: children && children.length
   }));
 });
 export default Carousel;
@@ -138,4 +133,51 @@ export const StyledCarousel = styled.div`
   leftItem
 }) => leftItem === 0 ? '' : 'red'};
   }
+`;
+
+const CarouselPage = ({
+  current,
+  total
+}) => {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(StyledPageContainer, {
+    className: "pageContainer"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "currentPage"
+  }, current), /*#__PURE__*/React.createElement("div", {
+    className: "pageDivider"
+  }, "/"), /*#__PURE__*/React.createElement("div", {
+    className: "totalPage"
+  }, total)));
+};
+
+const StyledPageContainer = styled.div`
+  position: absolute;
+  top: -1.2rem;
+  right: 1%;
+  display: flex;
+  .pageDivider {
+    font-size: 0.9rem;
+  }
+`;
+
+const CarouselItem = ({
+  item,
+  idx,
+  setItemWidth,
+  marginRigthForItem
+}) => {
+  const childRef = useRef();
+  useEffect(() => {
+    if (idx === 0) setItemWidth(childRef.current.offsetWidth);
+  }, []);
+  return /*#__PURE__*/React.createElement(StyledCarouselItem, {
+    ref: childRef,
+    marginRigthForItem: marginRigthForItem
+  }, item);
+};
+
+const StyledCarouselItem = styled.div`
+  margin-right: ${({
+  marginRigthForItem
+}) => `${marginRigthForItem}px`};
 `;

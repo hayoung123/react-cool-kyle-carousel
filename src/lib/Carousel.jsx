@@ -1,8 +1,6 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { IoChevronBackSharp, IoChevronForwardSharp } from 'react-icons/io5';
-import CarouselItem from './item/CarouselItem';
-import CarouselPage from './page/CarouselPage';
 
 const Carousel = forwardRef(
   (
@@ -32,7 +30,7 @@ const Carousel = forwardRef(
     //초기 설정
     useEffect(() => {
       setAnimation(`${speed / 1000}s ${animationType}`);
-    }, [infinity, slideToScroll, speed, animationType]);
+    }, [slideToScroll, speed, animationType]);
 
     const setAnimationType = (animationSpeed, type) => {
       setAnimation(`${animationSpeed / 1000}s ${type}`);
@@ -91,9 +89,6 @@ const Carousel = forwardRef(
         {defaultPaging && (
           <CarouselPage current={currIdx + slideToShow} total={children && children.length} />
         )}
-        {PagingComp && (
-          <PagingComp current={currIdx + slideToShow} total={children && children.length} />
-        )}
       </StyledCarousel>
     );
   }
@@ -131,4 +126,44 @@ export const StyledCarousel = styled.div`
   .rightArrow :hover {
     color: ${({ leftItem }) => (leftItem === 0 ? '' : 'red')};
   }
+`;
+
+const CarouselPage = ({ current, total }) => {
+  return (
+    <>
+      <StyledPageContainer className='pageContainer'>
+        <div className='currentPage'>{current}</div>
+        <div className='pageDivider'>/</div>
+        <div className='totalPage'>{total}</div>
+      </StyledPageContainer>
+    </>
+  );
+};
+
+const StyledPageContainer = styled.div`
+  position: absolute;
+  top: -1.2rem;
+  right: 1%;
+  display: flex;
+  .pageDivider {
+    font-size: 0.9rem;
+  }
+`;
+
+const CarouselItem = ({ item, idx, setItemWidth, marginRigthForItem }) => {
+  const childRef = useRef();
+
+  useEffect(() => {
+    if (idx === 0) setItemWidth(childRef.current.offsetWidth);
+  }, []);
+
+  return (
+    <StyledCarouselItem ref={childRef} marginRigthForItem={marginRigthForItem}>
+      {item}
+    </StyledCarouselItem>
+  );
+};
+
+const StyledCarouselItem = styled.div`
+  margin-right: ${({ marginRigthForItem }) => `${marginRigthForItem}px`};
 `;
